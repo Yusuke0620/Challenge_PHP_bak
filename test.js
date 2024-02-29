@@ -1,47 +1,22 @@
-import text from "./test3";
-console.log(text);
-import chalk from "chalk";
+const ball = document.querySelector('.ball');
 
+//クリックイベント
+ball.addEventListener('click', () => {
 
-class Plant {
-    constructor(name, height) {
-        this.name = name;
-        this.height = height;
-    }
-    greet() {
-        console.log("こんにちは");
-    }
-
-    info() {
-        this.greet();
-        console.log(`名前は${this.name}です`);
-        console.log(`高さは${this.height}cmです`);
-    }
-}
-
-/* クラス継承 */
-class Flower extends Plant {
-    constructor(name, color, height ) {
-        super(name, height);
-        this.color = color;
-    }
-
-
-    smell() {
-        console.log("素晴らしい香りがします");
-    }
-
+    //キーフレーム//透明から不透明
+    const keyframes = [
+        { opacity: 0.1, transform: 'translate(0, 0)' },
+        { opacity: 1, transform: 'translate(300px, 0)' },
+    ];
+    //オプション
+    const options = {
+        duration: 1000,
+        easing: 'ease-in-out',
+    };
     
-    info() {
-        this.greet();
-        console.log(`名前は${this.name}です`);
-        console.log(`色は${this.color}です`);
-        console.log(`高さは${this.height}cmです`);
-        this.smell();
-    }
-}
+    //animateで出力
+    ball.animate(keyframes, options);
+});
 
 
-const flower = new Flower("サクラ", "ピンク", 25);
 
-flower.info();
