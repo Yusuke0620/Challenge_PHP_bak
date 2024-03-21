@@ -1,40 +1,20 @@
-/*-------------------------------------------
-要素をスクロールで表示
--------------------------------------------*/
-
-const animateFade = (entries, obs) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      console.log(entry.target);
-
-      entry.target.animate(
-        {
-          opacity: [0, 1],
-          filter: ['blur(.4rem)', 'blur(0)'],
-          translate: ['0 4rem', 0],
-        },
-        {
-          duration: 2000,
-          easing: 'ease',
-          fill: 'forwards',
-        }
-      );
-
-      obs.unobserve(entry.target);
-    }
-  });
-};
+const openBtn = document.querySelector('.open-btn');
+const gNav = document.getElementById('g-nav');
 
 
 
+// ボタンがクリックされたら
+openBtn.addEventListener("click", () => {
+    // ボタン自身に active クラスを付与し、ナビゲーションに panel-active クラスを付与
+    this.classList.toggle("active");
+    gNav.classList.toggle("panel-active");
+});
 
-
-//監視ロボ
-const fadeObserver = new IntersectionObserver(animateFade);
-//監視する要素を代入しておく
-const fadeElements = document.querySelectorAll('.fadein');
-
-fadeElements.forEach((fadeElement) => {
-  //監視要素を指示
-  fadeObserver.observe(fadeElement);
-})
+// ナビゲーションのリンクがクリックされたら
+document.querySelectorAll("#g-nav a").forEach(function(link) {
+    link.addEventListener("click", function() {
+        // ボタンの active クラスを除去し、ナビゲーションの panel-active クラスも除去
+        openBtn.classList.remove("active");
+        gNav.classList.remove("panel-active");
+    });
+});

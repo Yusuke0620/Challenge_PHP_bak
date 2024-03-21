@@ -1,364 +1,164 @@
-@charset "UTF-8";
-/*
-loading画面
-================================================ */
-/*-------------------------------------------
-ページロード時の画面
--------------------------------------------*/
-#loading {
-  /* クリーム色の背景色 */
-  background-color: #eee;
-  /* fixedで固定 */
-  position: fixed;
-  z-index: 999;
-  /* グリッドコンテナ */
-  display: grid;
-  /* グリッドコンテナで縦横中央揃え */
-  place-items: center;
-  /* 要素の位置を四方0で指定する、これにより全面が背景色で覆われる */
-  inset: 0;
+@charset "utf-8";
+
+/*========= ナビゲーションのためのCSS ===============*/
+
+#g-nav{
+    /*position:fixed;にし、z-indexの数値を小さくして最背面へ*/
+    position:fixed;
+    z-index: -1;
+    opacity: 0;/*はじめは透過0*/
+    /*ナビの位置と形状*/
+  top:0;
+  width:100%;
+    height: 100vh;/*ナビの高さ*/
+  background:#999;
+    /*動き*/
+  transition: all 0.3s;
 }
 
-/*-------------------------------------------
-緑色のローディングエリアが下から上に移動するアニメーション
--------------------------------------------*/
-#loading #loading-screen {
-  /* 緑色のアニメーション背景色 */
-  background: #d5edeb;
-  /* fixedで固定 */
-  position: fixed;
-  /* 要素の位置を四方0で指定する、これにより全面がアニメーションの緑色で覆われる */
-  inset: 0;
-  /* 優先度は1つ下げる */
-  z-index: 998;  
-  /* 通常はX軸は起点の0だが、Y軸が100vhなのでウインドウ1枚分真下に隠れている状態 */
-  translate: 0 100vh;
+/*アクティブクラスがついたら透過なしにして最前面へ*/
+#g-nav.panel-active{
+  opacity: 1;
+  z-index:999;
 }
 
-/* 
-「Loading...」の文字 
-#loadingのグリッドコンテナで縦横中央揃えに指定されている
-*/
-#loading p {
-  font-size: 2rem;
-  font-family: "Oswald", sans-serif;
-  z-index: 999;
+/*ナビゲーションの縦スクロール*/
+#g-nav.panel-active #g-nav-list{
+    /*ナビの数が増えた場合縦スクロール*/
+    position: fixed;
+    z-index: 999; 
+    width: 100%;
+    height: 100vh;/*表示する高さ*/
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
-/*
-スライドパネルと開閉ボタン
-================================================ */
-/*-------------------------------------------
-開くボタン
--------------------------------------------*/
-.btn-menu {
-  /* 
-  fixedで固定し下にスクロールしてもついてくる
-  rightとtopでXY座標を決める 
-  */
-  position: fixed;
-  right: 1rem;
-  top: 1rem;
-  /* z-indexで優先表示 */
-  z-index: 4;
-  /* 罫線と丸み、余白、横幅高さ、hover時の時間を設定している */
-  padding: 0.5rem 1rem;
-  border: 1px solid #403632;
-  border-radius: 50%;
-  height: 4rem;
-  width: 4rem;
-  transition: 0.5s;
+/*ナビゲーション*/
+#g-nav ul {
+    display: none;
+    /*ナビゲーション天地中央揃え*/
+    position: absolute;
+    z-index: 999;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
 }
 
-/* hover時の背景色 */
-.btn-menu:hover {
-  background-color: #d5edeb;
+#g-nav.panel-active ul {
+    display: block;
 }
 
-/* ハンバーガーメニュー(3本線) */
-.btn-menu svg {
-  fill: #403632;
-  margin-top: 0.25rem;
-  height: 2rem;
-  width: 2rem;
+/*リストのレイアウト設定*/
+
+#g-nav li{
+  list-style: none;
+    text-align: center; 
 }
 
-/*-------------------------------------------
-閉じるボタン
--------------------------------------------*/
-/*上記の「.btn-menu」で同じ設定にしている */
-#menu-close {
-  border: 1px solid #d5edeb;
+#g-nav li a{
+  color: #333;
+  text-decoration: none;
+  padding:10px;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: bold;
 }
 
-#menu-close svg {
-  fill: #d5edeb;
+/*========= ボタンのためのCSS ===============*/
+.openbtn1{
+  position:fixed;
+    z-index: 9999;/*ボタンを最前面に*/
+  top:10px;
+  right: 10px;
+  cursor: pointer;
+    width: 50px;
+    height:50px;
+}
+  
+/*×に変化*/  
+.openbtn1 span{
+    display: inline-block;
+    transition: all .4s;
+    position: absolute;
+    left: 14px;
+    height: 3px;
+    border-radius: 2px;
+  background-color: #666;
+    width: 45%;
+  }
+
+.openbtn1 span:nth-of-type(1) {
+  top:15px; 
 }
 
-/* hover時のハンバーガーメニュー(3本線)の色 */
-#menu-close:hover svg {
-  fill: #403632;
+.openbtn1 span:nth-of-type(2) {
+  top:23px;
 }
 
-/*-------------------------------------------
-スライドメニューパネル
--------------------------------------------*/
-#menu-panel {
-  /* 
-  fixedで固定し下にスクロールしてもついてくる
-  rightとtopでXY座標を決め右上に固定
-  */
-  position: fixed;
-  top: 0;
-  right: 0;
-  /* z-indexで優先表示 */
-  z-index: 4; 
-  /* 横幅32％が20rem以上なら32vwが適用、20rem以下になると20rem固定、ウインドウ幅の閾値は1000px */
-  width: max(32vw, 20rem);
-  /* 100vhにすることでスクロールしても高さ一杯に固定 */
-  height: 100vh;
-  /* ビューポートの幅の100%分移動⇨ウインドウの外に移動され視界から消える */
-  translate: 100vw; 
-  /* 余白・背景色・影・フォント */
-  padding: 8rem 2rem 2rem;
-  background-color: #403632;
-  box-shadow: 0 0 2rem #403632;
-  font-family: "Oswald", sans-serif;  
+.openbtn1 span:nth-of-type(3) {
+  top:31px;
 }
 
-#menu-panel .menu-list li {
-  margin: 1.5rem 0;
-  opacity: 0;
-}
-#menu-panel .menu-list a {
-  color: #d5edeb;
-  font-size: 2rem;
-  transition: all 0.5s;
-}
-#menu-panel .menu-list a:hover {
-  color: #63dbd0;
+.openbtn1.active span:nth-of-type(1) {
+    top: 18px;
+    left: 18px;
+    transform: translateY(6px) rotate(-45deg);
+    width: 30%;
 }
 
-/*-------------------------------------------
-要素をスクロールで表示
--------------------------------------------*/
-.fadein {
+.openbtn1.active span:nth-of-type(2) {
   opacity: 0;
 }
 
-
-/*
-Common class for setting width
-================================================ */
-.wrapper {
-  max-width: 38rem;
-  padding: 0 1rem;
-  margin: auto;
+.openbtn1.active span:nth-of-type(3){
+    top: 30px;
+    left: 18px;
+    transform: translateY(-6px) rotate(45deg);
+    width: 30%;
 }
 
-/*
-COMMON
-================================================ */
-* {
-  box-sizing: border-box;
+
+
+/*========= レイアウトのためのCSS ===============*/
+
+h1{
+  font-size:1.2rem;
 }
 
-html {
-  font-size: 100%;
+h2{
+  font-size:1.2rem;
+  text-align: center;
+  margin: 0 0 30px 0;
 }
 
-body {
-  color: #403632;
-  background: url("../images/bg-shadow.jpg") no-repeat right bottom/cover fixed;
+p{
+  margin-top:20px;  
+}
+
+small{
+  color:#fff;
+  display: block;
   text-align: center;
 }
 
-img {
-  max-width: 100%;
-  vertical-align: bottom;
+#header{
+  width:100%;
+  background:#333;
+  color:#fff;
+  text-align: center;
+  padding: 20px;
 }
 
-li {
-  list-style: none;
+section{
+  padding:100px 30px;
 }
 
-a {
-  text-decoration: none;
+section:nth-child(2n){
+  background:#f3f3f3; 
 }
 
-p {
-  line-height: 1.7;
+#footer{
+  background:#333;
+  padding:20px;
 }
-
-.title {
-  font-family: "Oswald", sans-serif;
-  font-size: min(10vw, 4rem);
-  margin-bottom: 2rem;
-}
-
-.btn {
-  display: inline-block;
-  color: #fff;
-  background: #403632;
-  border: 1px solid #403632;
-  padding: 1rem;
-  margin: 2rem 0;
-  transition: 0.4s;
-}
-
-/*-------------------------------------------
-hero
--------------------------------------------*/
-.hero {
-  height: 100vh;
-  position: relative;
-}
-.hero::after {
-  position: absolute;
-  top: 0;
-  left: 0;
-  content: "";
-  width: 50%;
-  height: 100vh;
-  background: url("../images/bg-hero.jpg") no-repeat center/cover;
-}
-.hero h1 {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: max(12vw, 3rem);
-  line-height: 1.2;
-  z-index: 2;
-  width: 100%;
-}
-
-/*-------------------------------------------
-concept
--------------------------------------------*/
-.concept {
-  margin: 8rem 0;
-  background-image: linear-gradient(to right, transparent 0%, transparent 20%, #eee 20%, #eee 100%);
-}
-.concept p {
-  text-align: left;
-  margin-bottom: 2rem;
-}
-
-/*-------------------------------------------
-gallery
--------------------------------------------*/
-.gallery {
-  display: flex;
-  flex-direction: column-reverse;
-}
-.gallery .gallery-image {
-  width: min(100%, 36rem);
-  margin: auto;
-  position: relative;
-}
-.gallery .gallery-image::after {
-  display: block;
-  content: "";
-  width: calc(100% - 2rem);
-  height: calc(100% - 2.5rem);
-  z-index: 3;
-  border: 3px solid #fff;
-  top: 1rem;
-  left: 1rem;
-  position: absolute;
-}
-.gallery .gallery-image img {
-  aspect-ratio: 3/4;
-  width: 100%;
-  object-fit: cover;
-}
-.gallery .gallery-thumbnails {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(5, 1fr);
-  margin: 1rem 0;
-}
-.gallery .gallery-thumbnails img {
-  aspect-ratio: 3/4;
-  object-fit: cover;
-  cursor: pointer;
-}
-
-/*-------------------------------------------
-shop
--------------------------------------------*/
-.shop {
-  background: url("../images/bg-shop.jpg") no-repeat center top/cover;
-  height: 40rem;
-  margin-top: 16rem;
-  position: relative;
-}
-.shop .shop-content {
-  background: #fff;
-  padding: 3rem;
-  position: absolute;
-  top: -8rem;
-  left: 0;
-  right: 0;
-  width: 90vw;
-}
-.shop h3 {
-  font-weight: normal;
-  padding-top: 2rem;
-  margin: 1rem 0;
-  border-top: 1px solid #eee;
-}
-
-/* レスポンシブ
-------------------------------- */
-@media screen and (min-width: 800px) {
-  /* COMMON */
-  .title {
-    margin-bottom: 3rem;
-  }
-  .btn:hover {
-    color: #403632;
-    background-color: #d5edeb;
-  }
-  /* CONCEPT */
-  .concept {
-    display: flex;
-    margin: 16rem 0;
-  }
-  .concept p {
-    text-align-last: left;
-  }
-  .concept img {
-    margin: -6rem 0;
-    max-width: 38rem;
-  }
-  /* gallery */
-  .gallery {
-    flex-direction: row;
-  }
-  .gallery .gallery-image {
-    width: 50vw;
-    margin: 0;
-  }
-  .gallery .gallery-image img {
-    height: 100vh;
-  }
-  .gallery .gallery-content {
-    width: 30%;
-  }
-  .gallery .gallery-content .gallery-thumbnails {
-    gap: 2vw;
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .gallery .gallery-content .gallery-thumbnails img:hover {
-    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.4);
-    transition: 0.4s;
-  }
-  /* SHOP */
-  .shop {
-    height: 50rem;
-    margin-top: 20rem;
-  }
-}
-
